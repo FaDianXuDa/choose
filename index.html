@@ -199,8 +199,13 @@
         }
 
         function rollName() {
-            const availableStudents = students.filter(s => !winners.includes(s));
-            if (availableStudents.length === 0) return '';
+            const winnerNames = winners.map(winner => winner.name);
+            // 过滤掉已中奖的同学，得到可抽奖的名单
+            const availableStudents = students.filter(s => !winnerNames.includes(s));
+            
+            // 防止无可用人员时出错
+            if (availableStudents.length === 0) return '无可用人员';
+            // 随机选一个名字
             const randomIndex = Math.floor(Math.random() * availableStudents.length);
             return availableStudents[randomIndex];
         }
