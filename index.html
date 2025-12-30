@@ -171,24 +171,17 @@
     </div>
 
     <script>
-        // 1. 初始化数据
-        // 39个同学名单（可自行修改名字）
-        const students = ["ZJK","YTZY","SHR","刘JH","HYT","WWS","WJR","XQY","GYE","WSF","LYT","L芷Y","ZZY","LYL","DHY","FBQ","LJZ","XYXY","SXY","LJX","ZMY","DYQ","LHM","DXK","YYX","LGN","WHS","HX","李JH","WJL","YXY","刘ZY","CER","章YM","LXY","HGX","曾YM","PYJ"];
-        // 已中奖的同学名单
+        const students = ["张晋恺","杨唐子漪","石洪睿","刘峻宏","黄筠童","王文硕","邬佳睿","许亲寓","官佑恩","王寿丰","罗雨彤","刘芷言","周子渝","刘奕伶","邓画嫣","冯冰淇","李俊之","向延","宋听怡","李金汐","赵明宇","丁禹淇","李浩铭","杜昕柯","洋芋轩","吕耿楠","王海苏","黄啸","李俊涵","武俊历","杨欣妍","刘增阳","曹恩睿","章晏铭","刘心扬","黄光羲","曾奕鸣","裴曜景"];
         let winners = [];
-        // 奖项配置
         const prizeConfig = {
             special: { count: 1, remain: 1, name: "特等奖：线条小狗/暖手宝" },
             first: { count: 3, remain: 3, name: "一等奖：笔盒+小汽车" },
             second: { count: 6, remain: 6, name: "二等奖：盒装中性笔" },
             third: { count: 10, remain: 10, name: "三等奖：健达（一条）By主持人" }
         };
-        // 滚动定时器
         let rollTimer = null;
-        // 当前抽奖的奖项类型
         let currentPrizeType = '';
 
-        // 2. 获取DOM元素
         const rollArea = document.getElementById('rollArea');
         const drawBtn = document.getElementById('drawBtn');
         const winnerList = document.getElementById('winnerList');
@@ -197,26 +190,21 @@
         const secondCount = document.getElementById('secondCount');
         const thirdCount = document.getElementById('thirdCount');
 
-        // 3. 确定当前该抽哪个奖项
         function getCurrentPrizeType() {
             if (prizeConfig.special.remain > 0) return 'special';
             if (prizeConfig.first.remain > 0) return 'first';
             if (prizeConfig.second.remain > 0) return 'second';
             if (prizeConfig.third.remain > 0) return 'third';
-            return ''; // 所有奖项抽完
+            return ''; 
         }
 
-        // 4. 滚动名字函数
         function rollName() {
-            // 过滤掉已中奖的同学，得到可抽奖的名单
             const availableStudents = students.filter(s => !winners.includes(s));
             if (availableStudents.length === 0) return '';
-            // 随机选一个名字
             const randomIndex = Math.floor(Math.random() * availableStudents.length);
             return availableStudents[randomIndex];
         }
 
-        // 5. 更新奖项剩余数量显示
         function updatePrizeCount() {
             specialCount.textContent = prizeConfig.special.remain;
             firstCount.textContent = prizeConfig.first.remain;
@@ -224,13 +212,11 @@
             thirdCount.textContent = prizeConfig.third.remain;
         }
 
-        // 6. 更新中奖名单显示
         function updateWinnerList() {
             if (winners.length === 0) {
                 winnerList.innerHTML = '<div class="no-prize">没有任何中奖的高雅人士</div>';
                 return;
             }
-            // 生成中奖名单HTML
             let winnerHtml = '';
             winners.forEach(winner => {
                 winnerHtml += `<div class="winner-item">${winner.name}（${winner.prize}）</div>`;
@@ -238,9 +224,7 @@
             winnerList.innerHTML = winnerHtml;
         }
 
-        // 7. 抽奖核心逻辑
         drawBtn.addEventListener('click', function() {
-            // 判断是否所有奖项都抽完
             currentPrizeType = getCurrentPrizeType();
             if (!currentPrizeType) {
                 rollArea.textContent = '看什么看？没了！';
@@ -248,37 +232,28 @@
                 return;
             }
 
-            // 按钮状态切换：开始/停止
             if (this.textContent === 'GoGoGo出发咯！') {
-                // 开始滚动名字
                 this.textContent = 'NoNoNo被肘咯。';
                 rollArea.style.color = '#e63946';
-                // 每隔50毫秒更新一次名字
                 rollTimer = setInterval(() => {
                     rollArea.textContent = rollName();
                 }, 50);
             } else {
-                // 停止滚动，确定中奖者
                 clearInterval(rollTimer);
                 this.textContent = 'GoGoGo出发咯！';
                 rollArea.style.color = '#2a9d8f';
                 
-                // 获取中奖者名字
                 const winnerName = rollArea.textContent;
-                // 记录中奖信息
                 winners.push({
                     name: winnerName,
                     prize: prizeConfig[currentPrizeType].name
                 });
                 
-                // 减少对应奖项剩余数量
                 prizeConfig[currentPrizeType].remain--;
                 
-                // 更新界面显示
                 updatePrizeCount();
                 updateWinnerList();
                 
-                // 提示中奖信息
                 setTimeout(() => {
                     alert(`恭喜${winnerName}获得${prizeConfig[currentPrizeType].name}！`);
                 }, 100);
